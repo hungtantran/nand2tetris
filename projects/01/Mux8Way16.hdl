@@ -18,5 +18,47 @@ CHIP Mux8Way16 {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    Not(in=sel[0], out=notsel0);
+    Not(in=sel[1], out=notsel1);
+    Not(in=sel[2], out=notsel2);
+
+    Mux16(a=a, b[0..15]=false, sel=sel[2], out=a1);
+    Mux16(a=a1, b[0..15]=false, sel=sel[1], out=a2);
+    Mux16(a=a2, b[0..15]=false, sel=sel[0], out=outa);
+
+    Mux16(a=b, b[0..15]=false, sel=sel[2], out=b1);
+    Mux16(a=b1, b[0..15]=false, sel=sel[1], out=b2);
+    Mux16(a=b2, b[0..15]=false, sel=notsel0, out=outb);
+
+    Mux16(a=c, b[0..15]=false, sel=sel[2], out=c1);
+    Mux16(a=c1, b[0..15]=false, sel=notsel1, out=c2);
+    Mux16(a=c2, b[0..15]=false, sel=sel[0], out=outc);
+
+    Mux16(a=d, b[0..15]=false, sel=sel[2], out=d1);
+    Mux16(a=d1, b[0..15]=false, sel=notsel1, out=d2);
+    Mux16(a=d2, b[0..15]=false, sel=notsel0, out=outd);
+
+    Mux16(a=e, b[0..15]=false, sel=notsel2, out=e1);
+    Mux16(a=e1, b[0..15]=false, sel=sel[1], out=e2);
+    Mux16(a=e2, b[0..15]=false, sel=sel[0], out=oute);
+
+    Mux16(a=f, b[0..15]=false, sel=notsel2, out=f1);
+    Mux16(a=f1, b[0..15]=false, sel=sel[1], out=f2);
+    Mux16(a=f2, b[0..15]=false, sel=notsel0, out=outf);
+
+    Mux16(a=g, b[0..15]=false, sel=notsel2, out=g1);
+    Mux16(a=g1, b[0..15]=false, sel=notsel1, out=g2);
+    Mux16(a=g2, b[0..15]=false, sel=sel[0], out=outg);
+
+    Mux16(a=h, b[0..15]=false, sel=notsel2, out=h1);
+    Mux16(a=h1, b[0..15]=false, sel=notsel1, out=h2);
+    Mux16(a=h2, b[0..15]=false, sel=notsel0, out=outh);
+
+    Or16(a=outa, b=outb, out=out1);
+    Or16(a=outc, b=outd, out=out2);
+    Or16(a=oute, b=outf, out=out3);
+    Or16(a=outg, b=outh, out=out4);
+    Or16(a=out1, b=out2, out=outx);
+    Or16(a=out3, b=out4, out=outy);
+    Or16(a=outx, b=outy, out=out);
 }
