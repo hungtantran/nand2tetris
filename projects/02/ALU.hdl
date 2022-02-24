@@ -42,5 +42,29 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
+    Mux4Way16(a=x, b[0..15]=false, c[0..15]=false, d[0..15]=false, sel[0]=zx, sel[1]=zx, out=x1);
+    Not16(in=x1, out=negatex1);
+    Mux4Way16(a=x1, b[0..15]=false, c[0..15]=false, d=negatex1, sel[0]=nx, sel[1]=nx, out=xinput);
+
+    Mux4Way16(a=y, b[0..15]=false, c[0..15]=false, d[0..15]=false, sel[0]=zy, sel[1]=zy, out=y1);
+    Not16(in=y1, out=negatey1);
+    Mux4Way16(a=y1, b[0..15]=false, c[0..15]=false, d=negatey1, sel[0]=ny, sel[1]=ny, out=yinput);
+
+    Add16(a=xinput, b=yinput, out=xaddy);
+    And16(a=xinput, b=yinput, out=xandy);
+    Mux4Way16(a=xandy, b[0..15]=false, c[0..15]=false, d=xaddy, sel[0]=f, sel[1]=f, out=fouput);
+
+    Not16(in=fouput, out=negatefouput);
+    Mux4Way16(a=fouput, b[0..15]=false, c[0..15]=false, d=negatefouput, sel[0]=no, sel[1]=no, out[0..7]=tmp1);
+    Mux4Way16(a=fouput, b[0..15]=false, c[0..15]=false, d=negatefouput, sel[0]=no, sel[1]=no, out[8..14]=tmp2);
+    Mux4Way16(a=fouput, b[0..15]=false, c[0..15]=false, d=negatefouput, sel[0]=no, sel[1]=no, out[15]=tmp3);
+
+    And16(a[0..7]=tmp1, a[8..14]=tmp2, a[15]=tmp3, b[0..15]=true, out=out);
+
+    Or8Way(in=tmp1, out=zr1);
+    Or8Way(in[0..6]=tmp2, in[7]=tmp3, out=zr2);
+    Or(a=zr1, b=zr2, out=zr3);
+    Not(in=zr3, out=zr);
+
+    And(a=tmp3, b=true, out=ng);
 }
