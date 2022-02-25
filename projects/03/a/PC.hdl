@@ -16,5 +16,19 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    Inc16(in=prevout, out=prevoutInc);
+
+    // The order here is important, reset > load
+    Or(a=reset, b=false, out=sel00);
+    Or(a=load, b=sel00, out=sel01);
+
+    // The order here is important, reset > load > inc
+    Or(a=inc, b=false, out=sel10);
+    Not(in=load, out=notload);
+    And(a=sel10, b=notload, out=sel11);
+    Or(a=reset, b=sel11, out=sel12);
+
+    Mux4Way16(a=prevout, b=prevoutInc, c=in, d[0..15]=false, sel[0]=sel12, sel[1]=sel01, out=nextout);
+
+    Register(in=nextout, load=true, out=out, out=prevout);
 }
